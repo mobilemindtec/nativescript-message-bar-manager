@@ -1,0 +1,1 @@
+# nativescript-message-bar-manager
