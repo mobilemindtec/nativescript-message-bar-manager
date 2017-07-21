@@ -1,1 +1,1 @@
-pod 'TWMessageBarManager'
+pod 'TWMessageBarManager', :git => "https://github.com/mobilemindtec/TWMessageBarManager"
