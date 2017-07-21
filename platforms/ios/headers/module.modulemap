@@ -1,4 +1,4 @@
-module NativeScriptBackgroundTask {
+module NativeScriptMessageBarManager {
   umbrella "../../../../../platforms/ios/Pods/Headers/Public"
   export *
 }
