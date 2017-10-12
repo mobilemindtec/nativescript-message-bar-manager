@@ -1,5 +1,7 @@
 var Observable = require("data/observable").Observable;
+var messageBar = require("nativescript-message-bar-manager")
 var Color = require("tns-core-modules/color").Color
+var application = require("application")
 
 function getMessage(counter) {
     if (counter <= 0) {
@@ -21,21 +23,35 @@ function createViewModel() {
         show({
             title: "My Title",
             message: "My message " + this.counter,
-            backgroundColor: "#000000"
+            backgroundColor: "#000000",
+            callback: function(){
+                console.log("message taped")
+            }
         })
     }
 
     return viewModel;
 }
 
-function show (params){
+exports.createViewModel = createViewModel;
 
+
+function show(params){
+
+    if(!application.ios)
+        return
 
     var type = params.type || TWMessageBarMessageTypeSuccess
 
-    TWMessageBarManager.sharedInstance().styleSheet = createStyle(params)
+    var Style = createStyle(params) 
 
-    TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDuration(params.title, params.message, type, 6.0)
+    TWMessageBarManager.sharedInstance().styleSheet = new Style()
+    params.duration = params.duration || 10
+
+    TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDurationCallback(params.title, params.message, type, params.duration, function(){
+        if(params.callback)
+            params.callback()
+    })
 }
 
 function createStyle(params) {
@@ -91,9 +107,8 @@ function createStyle(params) {
 
     MyStyle.ObjCProtocols = [TWMessageBarStyleSheet];
     return MyStyle
+    
     })(NSObject)
 
-    return new MyStyle()
+  return MyStyle
 }
-
-exports.createViewModel = createViewModel;

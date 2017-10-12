@@ -46,70 +46,79 @@ exports.snackbar = function(options) {
 }
 
 
-exports.show = function(params){
+exports.messageBar = function(params){
 
-	if(!application.ios)
-		return
+    if(!application.ios)
+        return
 
-	var type = params.type || TWMessageBarMessageTypeSuccess
+    var type = params.type || TWMessageBarMessageTypeSuccess
 
-	TWMessageBarManager.sharedInstance().styleSheet = 
+    var Style = createStyle(params) 
 
-	TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDuration(params.title, params.message, type, 6.0)
+    TWMessageBarManager.sharedInstance().styleSheet = new Style()
+    params.duration = params.duration || 10
+
+    TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDurationCallback(params.title, params.message, type, params.duration, function(){
+        if(params.callback)
+            params.callback()
+    })
 }
 
 function createStyle(params) {
 
-	var MyStyle = (function(_super){
+    var MyStyle = (function(_super){
 
     __extends(MyStyle, _super);
     function MyStyle() {
         _super.apply(this, arguments);
-    }		
+    }       
 
     MyStyle.init = function(){
-    	return MyStyle.new()
+        return MyStyle.new()
     }
 
     MyStyle.prototype.backgroundColorForMessageType = function(type){
-    	return new Color(params.backgroundColor).ios
+        return new Color(params.backgroundColor).ios
     }
 
     MyStyle.prototype.strokeColorForMessageType = function(type){
-    	return null 
+        return null 
     }
 
     MyStyle.prototype.iconImageForMessageType = function(type){
-    	UIImage.imageNamed("icon-info")
+        UIImage.imageNamed("icon-info")
     }
 
     /*
     MyStyle.prototype.titleFontForMessageType = function(){
-    	
+        
     }
 
     MyStyle.prototype.descriptionFontForMessageType = function(){
-    	
+        
     }*/
 
     MyStyle.prototype.titleColorForMessageType = function(type){
 
-    	if(params.titleColor)
-    		return new Color(params.titleColor).ios
+        if(params.titleColor)
+            return new Color(params.titleColor).ios
 
-    	return new Color("#FFFFFF").ios
-    	
+        return new Color("#FFFFFF").ios
+        
     }
 
     MyStyle.prototype.descriptionColorForMessageType = function(type){
-    	
-    	if(params.messageColor)
-    		return new Color(params.messageColor).ios
+        
+        if(params.messageColor)
+            return new Color(params.messageColor).ios
 
-    	return new Color("#FFFFFF").ios
+        return new Color("#FFFFFF").ios
     }
 
     MyStyle.ObjCProtocols = [TWMessageBarStyleSheet];
     return MyStyle
-	})(NSObject)
+    
+    })(NSObject)
+
+  return MyStyle
 }
