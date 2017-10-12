@@ -1,6 +1,6 @@
 
 var application = require("application")
-var color = require("tns-core-modules/color")
+var Color = require("tns-core-modules/color").Color
 
 
 exports.snackbar = function(options) {
