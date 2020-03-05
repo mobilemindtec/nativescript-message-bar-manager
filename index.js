@@ -9,7 +9,7 @@ exports.snackbar = function(options) {
 	if(!application.android)
 		return
   
-  Snackbar = android.support.design.widget.Snackbar
+  Snackbar = com.google.android.material.snackbar.Snackbar
 
   var activity = application.android.foregroundActivity || application.android.startActivity
   var parentLayout = activity.findViewById(android.R.id.content)
@@ -34,7 +34,7 @@ exports.snackbar = function(options) {
   }
   
   if (options.maxLines){
-	  textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text)  	
+	  textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text)  	
   	textView.setMaxLines(options.maxLines)
   }
 
