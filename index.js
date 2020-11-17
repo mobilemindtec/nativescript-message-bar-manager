@@ -1,17 +1,17 @@
 
-var application = require("application")
-var Color = require("tns-core-modules/color").Color
+
+import {Color, isIOS, AndroidApplication } from "@nativescript/core"
 
 
-exports.snackbar = function(options) {
+export function snackbar(options) {
 
 
-	if(!application.android)
+	if(isIOS)
 		return
   
   Snackbar = com.google.android.material.snackbar.Snackbar
 
-  var activity = application.android.foregroundActivity || application.android.startActivity
+  var activity = AndroidApplication.android.foregroundActivity || AndroidApplication.android.startActivity
   var parentLayout = activity.findViewById(android.R.id.content)
 
   var action = new android.view.View.OnClickListener({
@@ -46,16 +46,16 @@ exports.snackbar = function(options) {
 }
 
 
-exports.messageBar = function(params){
+export function messageBar(params){ 
 
-    if(!application.ios)
+    if(!isIOS)
         return
 
     var type = params.type || TWMessageBarMessageTypeSuccess
 
     var Style = createStyle(params) 
 
-    TWMessageBarManager.sharedInstance().styleSheet = new Style()
+    TWMessageBarManager.sharedInstance().styleSheet = Style.init()
     params.duration = params.duration || 10
 
     TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDurationCallback(params.title, params.message, type, params.duration, function(){
@@ -70,15 +70,16 @@ function createStyle(params) {
 
     __extends(MyStyle, _super);
     function MyStyle() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }       
 
     MyStyle.init = function(){
         return MyStyle.new()
     }
 
-    MyStyle.prototype.backgroundColorForMessageType = function(type){
-        return new Color(params.backgroundColor).ios
+    MyStyle.prototype.backgroundColorForMessageType = function(type){        
+        var color =  new Color(params.backgroundColor).ios
+        return color
     }
 
     MyStyle.prototype.strokeColorForMessageType = function(type){
