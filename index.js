@@ -1,33 +1,18 @@
 
-var application = require("application")
-var Color = require("tns-core-modules/color").Color
+
+import {Color, isIOS, AndroidApplication } from "@nativescript/core"
 
 
-const Snackbar_Namespace = useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget;
-
-function getComponentR(rtype, field) {
-  const classPath = useAndroidX() ? 'com.google.android.material.R$' : 'android.support.design.R$';
-  return java.lang.Class.forName(classPath + rtype).getDeclaredField(field).get(null);
-}
-
-function useAndroidX() {
-  return (
-    global.androidx &&
-    com.google &&
-    com.google.android &&
-    com.google.android.material
-  );
-}
-
-exports.snackbar = function(options) {
+export function snackbar(options) {
 
 
-  if(!application.android)
+  if(isIOS)
     return
   
+  Snackbar = com.google.android.material.snackbar.Snackbar
 
-  var activity = application.android.foregroundActivity || application.android.startActivity
-  var parentLayout = activity.findViewById(android.R.id.content).getChildAt(0)
+  var activity = AndroidApplication.android.foregroundActivity || AndroidApplication.android.startActivity
+  var parentLayout = activity.findViewById(android.R.id.content)
 
   var action = new android.view.View.OnClickListener({
     onClick: function(v) {
@@ -39,7 +24,7 @@ exports.snackbar = function(options) {
   options.actonText = options.actonText || "OK"
   options.message = options.message || ""
 
-  snackbar = Snackbar_Namespace.Snackbar.make(parentLayout, options.message, Snackbar_Namespace.Snackbar.LENGTH_INDEFINITE)
+  snackbar = Snackbar.make(parentLayout, options.message, Snackbar.LENGTH_INDEFINITE)
   snackbar.setAction(options.actonText, action)
 
   snackbarView = snackbar.getView()
@@ -49,17 +34,8 @@ exports.snackbar = function(options) {
   }
   
   if (options.maxLines){
-
-    var SNACKBAR_TEXT_ID = getComponentR('id', 'snackbar_text');
-
-    console.log("SNACKBAR_TEXT_ID = " + SNACKBAR_TEXT_ID)
-
-    var textView = snackbarView.findViewById(SNACKBAR_TEXT_ID)    
-    
-    if(textView)
-     textView.setMaxLines(options.maxLines)
-    else
-      console.log("Snackbar text id not found, not set maxLines")
+    textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text)    
+    textView.setMaxLines(options.maxLines)
   }
 
   if(options.textColor)
@@ -69,16 +45,17 @@ exports.snackbar = function(options) {
 
 }
 
-exports.messageBar = function(params){
 
-    if(!application.ios)
+export function messageBar(params){ 
+
+    if(!isIOS)
         return
 
     var type = params.type || TWMessageBarMessageTypeSuccess
 
     var Style = createStyle(params) 
 
-    TWMessageBarManager.sharedInstance().styleSheet = new Style()
+    TWMessageBarManager.sharedInstance().styleSheet = Style.init()
     params.duration = params.duration || 10
 
     TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDurationCallback(params.title, params.message, type, params.duration, function(){
@@ -93,15 +70,16 @@ function createStyle(params) {
 
     __extends(MyStyle, _super);
     function MyStyle() {
-        _super.apply(this, arguments);
+        return _super.apply(this, arguments) || this;
     }       
 
     MyStyle.init = function(){
         return MyStyle.new()
     }
 
-    MyStyle.prototype.backgroundColorForMessageType = function(type){
-        return new Color(params.backgroundColor).ios
+    MyStyle.prototype.backgroundColorForMessageType = function(type){        
+        var color =  new Color(params.backgroundColor).ios
+        return color
     }
 
     MyStyle.prototype.strokeColorForMessageType = function(type){
