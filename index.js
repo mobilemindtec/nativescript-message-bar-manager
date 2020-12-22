@@ -3,48 +3,71 @@ var application = require("application")
 var Color = require("tns-core-modules/color").Color
 
 
+const Snackbar_Namespace = useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget;
+
+function getComponentR(rtype, field) {
+  const classPath = useAndroidX() ? 'com.google.android.material.R$' : 'android.support.design.R$';
+  return java.lang.Class.forName(classPath + rtype).getDeclaredField(field).get(null);
+}
+
+function useAndroidX() {
+  return (
+    global.androidx &&
+    com.google &&
+    com.google.android &&
+    com.google.android.material
+  );
+}
+
 exports.snackbar = function(options) {
 
 
-	if(!application.android)
-		return
+  if(!application.android)
+    return
   
-  Snackbar = android.support.design.widget.Snackbar
 
   var activity = application.android.foregroundActivity || application.android.startActivity
-  var parentLayout = activity.findViewById(android.R.id.content)
+  var parentLayout = activity.findViewById(android.R.id.content).getChildAt(0)
 
   var action = new android.view.View.OnClickListener({
     onClick: function(v) {
       if(options.callback)
-      	options.callback()
+        options.callback()
     }
   })
 
   options.actonText = options.actonText || "OK"
   options.message = options.message || ""
 
-  snackbar = Snackbar.make(parentLayout, options.message, Snackbar.LENGTH_INDEFINITE)
+  snackbar = Snackbar_Namespace.Snackbar.make(parentLayout, options.message, Snackbar_Namespace.Snackbar.LENGTH_INDEFINITE)
   snackbar.setAction(options.actonText, action)
 
   snackbarView = snackbar.getView()
 
   if(options.backgroundColor){
-	  snackbarView.setBackgroundColor(new Color(options.backgroundColor).android);
+    snackbarView.setBackgroundColor(new Color(options.backgroundColor).android);
   }
   
   if (options.maxLines){
-	  textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text)  	
-  	textView.setMaxLines(options.maxLines)
+
+    var SNACKBAR_TEXT_ID = getComponentR('id', 'snackbar_text');
+
+    console.log("SNACKBAR_TEXT_ID = " + SNACKBAR_TEXT_ID)
+
+    var textView = snackbarView.findViewById(SNACKBAR_TEXT_ID)    
+    
+    if(textView)
+     textView.setMaxLines(options.maxLines)
+    else
+      console.log("Snackbar text id not found, not set maxLines")
   }
 
   if(options.textColor)
-  	snackbar.setActionTextColor(new Color(options.textColor).android)
+    snackbar.setActionTextColor(new Color(options.textColor).android)
 
   snackbar.show()
 
 }
-
 
 exports.messageBar = function(params){
 
