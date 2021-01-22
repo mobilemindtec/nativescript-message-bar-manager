@@ -3,7 +3,7 @@ var application = require("application")
 var Color = require("tns-core-modules/color").Color
 
 
-const Snackbar_Namespace = useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget;
+const Snackbar_Namespace = application.ios ? undefined : useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget;
 
 function getComponentR(rtype, field) {
   const classPath = useAndroidX() ? 'com.google.android.material.R$' : 'android.support.design.R$';
