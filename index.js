@@ -1,6 +1,6 @@
 
-var application = require("application")
-var Color = require("tns-core-modules/color").Color
+var application = require("@nativescript/application/core")
+var Color = require("@nativescript/application/core/color").Color
 
 
 const Snackbar_Namespace = application.ios ? undefined : useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget;
