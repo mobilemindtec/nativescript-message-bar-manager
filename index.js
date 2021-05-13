@@ -79,7 +79,7 @@ exports.messageBar = function(params){
 
     var Style = createStyle(params) 
 
-    TWMessageBarManager.sharedInstance().styleSheet = new Style()
+    TWMessageBarManager.sharedInstance().styleSheet = Style.init()
     params.duration = params.duration || 10
 
     TWMessageBarManager.sharedInstance().showMessageWithTitleDescriptionTypeDurationCallback(params.title, params.message, type, params.duration, function(){
