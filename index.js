@@ -3,8 +3,6 @@ var application = require("@nativescript/core/application")
 var Color = require("@nativescript/core/color").Color
 
 
-const Snackbar_Namespace = application.ios ? undefined : useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget;
-
 function getComponentR(rtype, field) {
   const classPath = useAndroidX() ? 'com.google.android.material.R$' : 'android.support.design.R$';
   return java.lang.Class.forName(classPath + rtype).getDeclaredField(field).get(null);
@@ -25,6 +23,7 @@ exports.snackbar = function(options) {
   if(!application.android)
     return
   
+  const Snackbar_Namespace = useAndroidX() ? com.google.android.material.snackbar : android.support.design.widget
 
   var activity = application.android.foregroundActivity || application.android.startActivity
   var parentLayout = activity.findViewById(android.R.id.content).getChildAt(0)
